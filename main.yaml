@@ -1,0 +1,27 @@
+---
+- name: Update Linux LDAP Config
+  hosts: canada
+  gather_facts: true
+  become: true
+  tasks:
+  # - name: Value of inventory_hostname
+  #   debug: var={{ inventory_hostname }}
+
+  # - name: Value of ansible_hostname
+  #   debug: var={{ ansible_hostname }}
+
+  # - name: Value of ansible_user
+  #   debug: var={{ ansible_user }}
+
+  - name: Replace uri line in /etc/nslcd.conf
+    replace: 
+      path: /etc/nslcd.conf
+      regexp: '^uri ldap://161.108.208.253/ ldap://131.99.75.1/$'
+      replace: 'uri ldap://131.99.75.2/ ldap://131.99.75.3/ ldap://131.99.75.4/ ldap://131.99.75.1/'
+      backup: yes
+
+  - name: Restart nslcd
+    service:
+      name: nslcd
+      state: restarted
+      enabled: yes
